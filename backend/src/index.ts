@@ -28,7 +28,11 @@ try {
   httpsServer = https.createServer(credentials, app);
   console.log("✅ SSL certificates loaded successfully");
 } catch (error) {
-  console.error("❌ SSL certificate error:", error.message);
+   if (error instanceof Error) {
+    console.error("❌ SSL certificate error:", error.message);
+  } else {
+    console.error('Unknown error', error);
+  }
   console.log("📝 Falling back to HTTP server...");
   
   // Fallback to HTTP for development
@@ -102,7 +106,7 @@ app.use("/api", locationRoutes);
 app.use("/api", authRoutes);
 
 // Enhanced server startup
-const PORT = process.env.PORT || 5000;
+const PORT = Number(process.env.PORT) || 5000;
 
 httpsServer.on('error', (error: any) => {
   console.error("❌ Server error:", error);
